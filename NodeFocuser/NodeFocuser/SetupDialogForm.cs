@@ -24,7 +24,7 @@ namespace ASCOM.NodeFocuser
         {
             // Place any validation constraint checks here
             // Update the state variables with results from the dialogue
-            Focuser.comPort = (string)comboBoxComPort.SelectedItem;
+            Focuser.ipAddress = ipAddressTextBox.Text;
             Focuser.tl.Enabled = chkTrace.Checked;
         }
 
@@ -53,14 +53,7 @@ namespace ASCOM.NodeFocuser
         private void InitUI()
         {
             chkTrace.Checked = Focuser.tl.Enabled;
-            // set the list of com ports to those that are currently available
-            comboBoxComPort.Items.Clear();
-            comboBoxComPort.Items.AddRange(System.IO.Ports.SerialPort.GetPortNames());      // use System.IO because it's static
-            // select the current port if possible
-            if (comboBoxComPort.Items.Contains(Focuser.comPort))
-            {
-                comboBoxComPort.SelectedItem = Focuser.comPort;
-            }
+            ipAddressTextBox.Text = Focuser.ipAddress;
         }
     }
 }
