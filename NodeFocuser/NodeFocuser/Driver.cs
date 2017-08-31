@@ -39,6 +39,7 @@ using ASCOM.Utilities;
 using ASCOM.DeviceInterface;
 using System.Globalization;
 using System.Collections;
+using Newtonsoft.Json;
 
 namespace ASCOM.NodeFocuser
 {
@@ -289,7 +290,6 @@ namespace ASCOM.NodeFocuser
 
         #region IFocuser Implementation
 
-        private int focuserPosition = 0; // Class level variable to hold the current focuser position
         private const int focuserSteps = 10000;
 
         public bool Absolute
@@ -312,7 +312,12 @@ namespace ASCOM.NodeFocuser
             get
             {
                 tl.LogMessage("IsMoving Get", false.ToString());
-                return false; // This focuser always moves instantaneously so no need for IsMoving ever to be True
+                using (var webClient = new System.Net.WebClient())
+                {
+                    var json = webClient.DownloadString(Url);
+                    var obj = JsonConvert.DeserializeObject<Position>(json);
+                    return obj.position != obj.target;
+                }
             }
         }
 
@@ -351,14 +356,23 @@ namespace ASCOM.NodeFocuser
         public void Move(int Position)
         {
             tl.LogMessage("Move", Position.ToString());
-            focuserPosition = Position; // Set the focuser position
+            using (var webClient = new System.Net.WebClient())
+            {
+                var urlWithPosition = Url + "?position=" + Position.ToString();
+                webClient.UploadString(urlWithPosition, "");
+            }
         }
 
         public int Position
         {
             get
             {
-                return focuserPosition; // Return the focuser position
+                using (var webClient = new System.Net.WebClient())
+                {
+                    var json = webClient.DownloadString(Url);
+                    var obj = JsonConvert.DeserializeObject<Position>(json);
+                    return obj.position;
+                }
             }
         }
 
@@ -544,6 +558,20 @@ namespace ASCOM.NodeFocuser
             var msg = string.Format(message, args);
             tl.LogMessage(identifier, msg);
         }
+
+        private String Url
+        {
+            get
+            {
+                return "http://" + ipAddress;
+            }
+        }
         #endregion
+    }
+
+    class Position
+    {
+        public int position;
+        public int target;
     }
 }

@@ -56,5 +56,17 @@ namespace ASCOM.NodeFocuser
                 return ((this.driver != null) && (driver.Connected == true));
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var position = driver.Position;
+            positionTextBox.Text = position.ToString();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var position = Int32.Parse(targetTextBox.Text);
+            driver.Move(position);
+        }
     }
 }
