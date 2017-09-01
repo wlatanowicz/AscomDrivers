@@ -303,8 +303,10 @@ namespace ASCOM.NodeFocuser
 
         public void Halt()
         {
-            tl.LogMessage("Halt", "Not implemented");
-            throw new ASCOM.MethodNotImplementedException("Halt");
+            using (var webClient = new System.Net.WebClient())
+            {
+                webClient.UploadString(Url, "DELETE", "");
+            }
         }
 
         public bool IsMoving
@@ -571,7 +573,7 @@ namespace ASCOM.NodeFocuser
 
     class Position
     {
-        public int position;
-        public int target;
+        public int position = 0;
+        public int target = 0;
     }
 }

@@ -65,8 +65,18 @@ namespace ASCOM.NodeFocuser
 
         private void button2_Click(object sender, EventArgs e)
         {
-            var position = Int32.Parse(targetTextBox.Text);
+            var position = Int32.Parse(positionTextBox.Text);
             driver.Move(position);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            driver.Halt();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            isMovingTextBox.Text = driver.IsMoving ? "YES" : "NO";
         }
     }
 }
